@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IPrimarySale.sol";
+import "./Errors.sol";
 
 abstract contract PrimarySale is IPrimarySale {
     /// @dev The address that receives all primary sales value.
@@ -13,7 +14,8 @@ abstract contract PrimarySale is IPrimarySale {
 
     /// @dev Lets a contract admin set the recipient for all primary sales.
     function setPrimarySaleRecipient(address _saleRecipient) external override {
-        require(_canSetPrimarySaleRecipient(), "Not authorized");
+        // require(_canSetPrimarySaleRecipient(), "Not authorized");
+        if(!_canSetPrimarySaleRecipient()) revert NotAuthorized();
         _setupPrimarySaleRecipient(_saleRecipient);
     }
 

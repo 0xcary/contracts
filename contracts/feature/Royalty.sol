@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IRoyalty.sol";
+import "./Errors.sol";
 
 abstract contract Royalty is IRoyalty {
     /// @dev The (default) address that receives all royalty value.
@@ -43,13 +44,16 @@ abstract contract Royalty is IRoyalty {
 
     /// @dev Lets a contract admin update the default royalty recipient and bps.
     function setDefaultRoyaltyInfo(address _royaltyRecipient, uint256 _royaltyBps) external override {
-        require(_canSetRoyaltyInfo(), "Not authorized");
+        // require(_canSetRoyaltyInfo(), "Not authorized");
+        if(!_canSetRoyaltyInfo()) revert NotAuthorized();
+
         _setupDefaultRoyaltyInfo(_royaltyRecipient, _royaltyBps);
     }
 
     /// @dev Lets a contract admin update the default royalty recipient and bps.
     function _setupDefaultRoyaltyInfo(address _royaltyRecipient, uint256 _royaltyBps) internal {
-        require(_royaltyBps <= 10_000, "Exceeds max bps");
+        // require(_royaltyBps <= 10_000, "Exceeds max bps");
+        if(_royaltyBps > 10_000) revert ExceedsMaxBps();
 
         royaltyRecipient = _royaltyRecipient;
         royaltyBps = uint16(_royaltyBps);
@@ -63,7 +67,9 @@ abstract contract Royalty is IRoyalty {
         address _recipient,
         uint256 _bps
     ) external override {
-        require(_canSetRoyaltyInfo(), "Not authorized");
+        // require(_canSetRoyaltyInfo(), "Not authorized");
+        if(!_canSetRoyaltyInfo()) revert NotAuthorized();
+
         _setupRoyaltyInfoForToken(_tokenId, _recipient, _bps);
     }
 
@@ -73,7 +79,8 @@ abstract contract Royalty is IRoyalty {
         address _recipient,
         uint256 _bps
     ) internal {
-        require(_bps <= 10_000, "Exceeds max bps");
+        // require(_bps <= 10_000, "Exceeds max bps");
+        if(_bps > 10_000) revert ExceedsMaxBps();
 
         royaltyInfoForToken[_tokenId] = RoyaltyInfo({ recipient: _recipient, bps: _bps });
 

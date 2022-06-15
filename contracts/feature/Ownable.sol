@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IOwnable.sol";
+import "./Errors.sol";
 
 abstract contract Ownable is IOwnable {
     /// @dev Owner of the contract (purpose: OpenSea compatibility)
@@ -9,7 +10,8 @@ abstract contract Ownable is IOwnable {
 
     /// @dev Lets a contract admin set a new owner for the contract. The new owner must be a contract admin.
     function setOwner(address _newOwner) external override {
-        require(_canSetOwner(), "Not authorized");
+        // require(_canSetOwner(), "Not authorized");
+        if(!_canSetOwner()) revert NotAuthorized();
         _setupOwner(_newOwner);
     }
 
